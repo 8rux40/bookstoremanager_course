@@ -1,6 +1,7 @@
 package com.tardin.bookstoremanager.users.entity;
 
 import com.tardin.bookstoremanager.books.entity.Book;
+import com.tardin.bookstoremanager.entity.Auditable;
 import com.tardin.bookstoremanager.users.enums.Gender;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
