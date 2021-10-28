@@ -45,7 +45,7 @@ class AuthorServiceTest {
 
         // when
         when(authorRepository.save(expectedCreatedAuthor)).thenReturn(expectedCreatedAuthor);
-        when(authorRepository.findByName((expectedAuthorToCreateDTO.getName()))).thenReturn(Optional.empty());
+        when(authorRepository.findByName(expectedAuthorToCreateDTO.getName())).thenReturn(Optional.empty());
 
         var createdAuthorDTO = authorService.create(expectedAuthorToCreateDTO);
 
@@ -58,7 +58,7 @@ class AuthorServiceTest {
         var expectedAuthorToCreateDTO = authorDTOBuilder.buildAuthorDTO();
         var expectedCreatedAuthor = authorMapper.toModel(expectedAuthorToCreateDTO);
 
-        when(authorRepository.findByName((expectedAuthorToCreateDTO.getName()))).thenReturn(Optional.of(expectedCreatedAuthor));
+        when(authorRepository.findByName(expectedAuthorToCreateDTO.getName())).thenReturn(Optional.of(expectedCreatedAuthor));
 
         assertThrows(AuthorAlreadyExistsException.class, () -> authorService.create(expectedAuthorToCreateDTO));
     }
