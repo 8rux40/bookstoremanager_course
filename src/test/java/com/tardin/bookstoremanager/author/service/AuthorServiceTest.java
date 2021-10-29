@@ -2,6 +2,7 @@ package com.tardin.bookstoremanager.author.service;
 
 import com.tardin.bookstoremanager.author.builder.AuthorDTOBuilder;
 import com.tardin.bookstoremanager.author.exception.AuthorAlreadyExistsException;
+import com.tardin.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.tardin.bookstoremanager.author.mapper.AuthorMapper;
 import com.tardin.bookstoremanager.author.repository.AuthorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,17 +40,13 @@ class AuthorServiceTest {
 
     @Test
     void whenNewAuthorIsInformedThenItShouldBeCreated() {
-        // given
         var expectedAuthorToCreateDTO = authorDTOBuilder.buildAuthorDTO();
         var expectedCreatedAuthor = authorMapper.toModel(expectedAuthorToCreateDTO);
 
-        // when
         when(authorRepository.save(expectedCreatedAuthor)).thenReturn(expectedCreatedAuthor);
         when(authorRepository.findByName(expectedAuthorToCreateDTO.getName())).thenReturn(Optional.empty());
 
         var createdAuthorDTO = authorService.create(expectedAuthorToCreateDTO);
-
-        // then
         assertThat(createdAuthorDTO, is(equalTo(expectedAuthorToCreateDTO)));
     }
 
@@ -61,5 +58,26 @@ class AuthorServiceTest {
         when(authorRepository.findByName(expectedAuthorToCreateDTO.getName())).thenReturn(Optional.of(expectedCreatedAuthor));
 
         assertThrows(AuthorAlreadyExistsException.class, () -> authorService.create(expectedAuthorToCreateDTO));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenAnAuthorShouldBeReturned() {
+        var expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        var expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId())).thenReturn(Optional.of(expectedFoundAuthor));
+        var foundAuthorDTO = authorService.findById(expectedFoundAuthorDTO.getId());
+
+        assertThat(foundAuthorDTO, is(equalTo(expectedFoundAuthorDTO)));
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenAnExceptionShouldBeThrown() {
+        var expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+
+        when(authorRepository.findById(expectedFoundAuthorDTO.getId())).thenReturn(Optional.empty());
+        var id = expectedFoundAuthorDTO.getId();
+
+        assertThrows(AuthorNotFoundException.class, () -> authorService.findById(id));
     }
 }

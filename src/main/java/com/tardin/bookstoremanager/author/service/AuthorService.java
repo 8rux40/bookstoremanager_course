@@ -1,7 +1,9 @@
 package com.tardin.bookstoremanager.author.service;
 
 import com.tardin.bookstoremanager.author.dto.AuthorDTO;
+import com.tardin.bookstoremanager.author.entity.Author;
 import com.tardin.bookstoremanager.author.exception.AuthorAlreadyExistsException;
+import com.tardin.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.tardin.bookstoremanager.author.mapper.AuthorMapper;
 import com.tardin.bookstoremanager.author.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,12 @@ public class AuthorService {
         var authorToCreate = authorMapper.toModel(authorDTO);
         var createdAuthor = authorRepository.save(authorToCreate);
         return authorMapper.toDTO(createdAuthor);
+    }
+
+    public AuthorDTO findById(Long id){
+        Author foundAuthor = authorRepository.findById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
+        return authorMapper.toDTO(foundAuthor);
     }
 
     private void verifyIfExists(String authorName) {
