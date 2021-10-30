@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -79,5 +80,25 @@ class AuthorServiceTest {
         var id = expectedFoundAuthorDTO.getId();
 
         assertThrows(AuthorNotFoundException.class, () -> authorService.findById(id));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenItShouldBeReturned() {
+        var expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+        var expectedFoundAuthor = authorMapper.toModel(expectedFoundAuthorDTO);
+
+        when(authorRepository.findAll()).thenReturn(Collections.singletonList(expectedFoundAuthor));
+        var foundAuthorsDTO = authorService.findAll();
+
+        assertThat(foundAuthorsDTO.size(), is(1));
+        assertThat(foundAuthorsDTO.get(0), is(equalTo(expectedFoundAuthorDTO)));
+    }
+
+    @Test
+    void whenListAuthorsIsCalledThenAnEmptyListShouldBeReturned() {
+        when(authorRepository.findAll()).thenReturn(Collections.emptyList());
+        var foundAuthorsDTO = authorService.findAll();
+
+        assertThat(foundAuthorsDTO.size(), is(0));
     }
 }
