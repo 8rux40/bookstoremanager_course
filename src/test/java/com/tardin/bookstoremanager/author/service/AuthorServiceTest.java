@@ -118,7 +118,7 @@ class AuthorServiceTest {
     }
 
     @Test
-    void whenInalidIdIsGivenThenAnExceptionShouldBeThrown() {
+    void whenInvalidIdIsGivenOnDeleteThenAnExceptionShouldBeThrown() {
         var expectedInvalidAuthorId = 1L;
 
         when(authorRepository.findById(expectedInvalidAuthorId)).thenReturn(Optional.empty());
