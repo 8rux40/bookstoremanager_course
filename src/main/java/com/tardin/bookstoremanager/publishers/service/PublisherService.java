@@ -9,6 +9,9 @@ import com.tardin.bookstoremanager.publishers.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PublisherService {
 
@@ -33,6 +36,10 @@ public class PublisherService {
         return repository.findById(id)
                 .map(mapper::toDTO)
                 .orElseThrow(() -> new PublisherNotFoundException(id));
+    }
+
+    public List<PublisherDTO> findAll() {
+        return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
     private void verifyIfExists(String name, String code) {
