@@ -19,7 +19,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PublisherServiceTest {
@@ -79,12 +79,11 @@ class PublisherServiceTest {
 
     @Test
     void whenInvalidIdIsGivenThenAnExceptionShouldBeThrown() {
-        var expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
-        final var expectedPublisherFoundId = expectedPublisherFoundDTO.getId();
+        final var expectedPublisherNotFoundId = 1L;
 
-        when(repository.findById(expectedPublisherFoundId)).thenReturn(Optional.empty());
+        when(repository.findById(expectedPublisherNotFoundId)).thenReturn(Optional.empty());
 
-        assertThrows(PublisherNotFoundException.class, () -> service.findById(expectedPublisherFoundId));
+        assertThrows(PublisherNotFoundException.class, () -> service.findById(expectedPublisherNotFoundId));
     }
 
     @Test
@@ -107,5 +106,29 @@ class PublisherServiceTest {
 
         assertThat(publishersDTOListFound.size(), is(0));
         assertThat(publishersDTOListFound, is(equalTo(Collections.emptyList())));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenItShouldBeDeleted() {
+        var expectedPublisherToDeleteDTO = publisherDTOBuilder.buildPublisherDTO();
+        final var expectedPublisherToDeleteId = expectedPublisherToDeleteDTO.getId();
+        var expectedPublisherToDelete = mapper.toModel(expectedPublisherToDeleteDTO);
+
+        doNothing().when(repository).deleteById(expectedPublisherToDeleteId);
+        when(repository.findById(expectedPublisherToDeleteId)).thenReturn(Optional.of(expectedPublisherToDelete));
+
+        service.delete(expectedPublisherToDeleteId);
+
+        verify(repository, times(1)).deleteById(expectedPublisherToDeleteId);
+        verify(repository, times(1)).findById(expectedPublisherToDeleteId);
+    }
+
+    @Test
+    void whenInvalidIdIsGivenOnDeleteThenAnExceptionShouldBeThrown() {
+        var expectedPublisherNotFoundId = 1L;
+
+        when(repository.findById(expectedPublisherNotFoundId)).thenReturn(Optional.empty());
+
+        assertThrows(PublisherNotFoundException.class, () -> service.delete(expectedPublisherNotFoundId));
     }
 }

@@ -42,6 +42,15 @@ public class PublisherService {
         return repository.findAll().stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
+    public void delete(Long id){
+        verifyAndGetPublisher(id);
+        repository.deleteById(id);
+    }
+
+    private Publisher verifyAndGetPublisher(Long id){
+        return repository.findById(id).orElseThrow(() -> new PublisherNotFoundException(id));
+    }
+
     private void verifyIfExists(String name, String code) {
         var duplicatedPublisher = repository.findByNameOrCode(name, code);
         if (duplicatedPublisher.isPresent()) {
