@@ -17,4 +17,11 @@ public interface UserControllerDocs {
     })
     MessageDTO create(UserDTO userDTO);
 
+    @ApiOperation(value = "User delete operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Success user deletion"),
+            @ApiResponse(code = 400, message = "User with informed id not found in the system")
+    })
+    void delete(Long id);
+
 }

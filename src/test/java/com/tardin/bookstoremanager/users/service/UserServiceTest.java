@@ -1,6 +1,7 @@
 package com.tardin.bookstoremanager.users.service;
 
 import com.tardin.bookstoremanager.users.builder.UserDTOBuilder;
+import com.tardin.bookstoremanager.users.exception.UserNotFoundException;
 import com.tardin.bookstoremanager.users.dto.MessageDTO;
 import com.tardin.bookstoremanager.users.exception.UserAlreadyExistsException;
 import com.tardin.bookstoremanager.users.mapper.UserMapper;
@@ -14,11 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -39,6 +42,26 @@ class UserServiceTest {
     }
 
     @Test
+    void whenValidUserIsInformedThenItShouldBeDeleted() {
+        var expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
+        var expectedDeletedUser = mapper.toModel(expectedDeletedUserDTO);
+        Long expectedDeletedUserId = expectedDeletedUserDTO.getId();
+
+        when(repository.findById(anyLong())).thenReturn(Optional.of(expectedDeletedUser));
+        doNothing().when(repository).deleteById(anyLong());
+        service.delete(expectedDeletedUserId);
+
+        verify(repository, times(1)).deleteById(expectedDeletedUserId);
+    }
+
+    @Test
+    void whenInvalidUserIdIsInformedThenAnExceptionShouldBeThrown() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.delete(0L));
+    }
+  
+    @Test  
     void whenNewUserIsInformedThenItShouldBeCreated() {
         var expectedUserToCreateDTO = userDTOBuilder.buildUserDTO();
         var expectedUserCreated = mapper.toModel(expectedUserToCreateDTO);

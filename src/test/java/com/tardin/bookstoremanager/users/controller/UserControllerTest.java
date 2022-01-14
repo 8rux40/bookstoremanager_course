@@ -15,10 +15,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static com.tardin.bookstoremanager.utils.JsonConversionUtils.asJsonString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +48,17 @@ class UserControllerTest {
                 .setViewResolvers(((viewName, locale) -> new MappingJackson2JsonView()))
                 .build();
     }
+
+    @Test
+    void whenDELETEIsCalledThenNoContentStatusShouldBeInformed() throws Exception {
+        var expectedUserToDeleteDTO = userDTOBuilder.buildUserDTO();
+        Long id = expectedUserToDeleteDTO.getId();
+
+        doNothing().when(service).delete(anyLong());
+
+        mockMvc.perform(delete(USER_API_URL_PATH + "/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
 
     @Test
     void whenPOSTIsCalledThenCreatedStatusShouldBeInformed() throws Exception {
