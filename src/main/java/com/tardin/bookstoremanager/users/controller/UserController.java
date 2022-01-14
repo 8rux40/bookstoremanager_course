@@ -1,5 +1,7 @@
 package com.tardin.bookstoremanager.users.controller;
 
+import com.tardin.bookstoremanager.users.dto.MessageDTO;
+import com.tardin.bookstoremanager.users.dto.UserDTO;
 import com.tardin.bookstoremanager.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,13 @@ public class UserController implements UserControllerDocs {
     public UserController(UserService service) {
         this.service = service;
     }
-
+  
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public MessageDTO create(@RequestBody @Valid UserDTO userDTO){
+        return service.create(userDTO);
+    }
+  
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
