@@ -57,8 +57,9 @@ class UserControllerTest {
         doNothing().when(service).delete(anyLong());
 
         mockMvc.perform(delete(USER_API_URL_PATH + "/" + id)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+    }
 
     @Test
     void whenPOSTIsCalledThenCreatedStatusShouldBeInformed() throws Exception {

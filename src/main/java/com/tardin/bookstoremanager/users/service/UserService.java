@@ -38,8 +38,9 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    private void verifyIfExists(Long id) throws UserNotFoundException{
+    private void verifyIfExists(Long id) throws UserNotFoundException {
         repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    }
 
     private void verifyIfExists(UserDTO userToCreateDTO) {
         String email = userToCreateDTO.getEmail();
