@@ -15,12 +15,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,5 +86,31 @@ class UserServiceTest {
                 .thenReturn(Optional.of(expectedDuplicatedUser));
 
         assertThrows(UserAlreadyExistsException.class, () -> service.create(expectedDuplicatedUserDTO));
+    }
+
+    @Test
+    void whenExistingUserIsInformedItShouldBeUpdated() {
+        var expectedUpdatedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUpdatedUserDTO.setUsername("btardin_update");
+        var expectedUpdatedUser = mapper.toModel(expectedUpdatedUserDTO);
+        String expectedUpdatedMessage = "User btardin_update with ID 1 successfully updated";
+
+        when(repository.findById(expectedUpdatedUserDTO.getId())).thenReturn(Optional.of(expectedUpdatedUser));
+        when(repository.save(expectedUpdatedUser)).thenReturn(expectedUpdatedUser);
+
+        MessageDTO successUpdatedMessage = service.update(expectedUpdatedUserDTO.getId(), expectedUpdatedUserDTO);
+
+        assertThat(successUpdatedMessage.getMessage(), is(equalToObject(expectedUpdatedMessage)));
+    }
+
+    @Test
+    void whenNotExistingUserIsInformedThenAnExceptionShouldBeThrown() {
+        var expectedUpdatedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUpdatedUserDTO.setUsername("btardin_update");
+
+        final var expectedUpdatedUserId = expectedUpdatedUserDTO.getId();
+        when(repository.findById(expectedUpdatedUserId)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.update(expectedUpdatedUserId, expectedUpdatedUserDTO));
     }
 }
