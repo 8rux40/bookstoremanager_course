@@ -20,8 +20,16 @@ public interface UserControllerDocs {
     @ApiOperation(value = "User delete operation")
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Success user deletion"),
-            @ApiResponse(code = 400, message = "User with informed id not found in the system")
+            @ApiResponse(code = 404, message = "User with informed id not found in the system")
     })
     void delete(Long id);
+
+    @ApiOperation(value = "User update operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success user updated"),
+            @ApiResponse(code = 400, message = "Missing required fields, or an error on validation field rules"),
+            @ApiResponse(code = 404, message = "User with informed id not found in the system")
+    })
+    MessageDTO update(Long id, UserDTO userDTO);
 
 }

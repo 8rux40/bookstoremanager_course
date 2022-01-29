@@ -15,13 +15,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static com.tardin.bookstoremanager.utils.JsonConversionUtils.asJsonString;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -72,8 +71,8 @@ class UserControllerTest {
         when(service.create(expectedCreatedUserDTO)).thenReturn(expectedCreatedMessageDTO);
 
         mockMvc.perform(post(USER_API_URL_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(expectedCreatedUserDTO)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(expectedCreatedUserDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message", is(expectedMessage)));
     }
@@ -84,8 +83,38 @@ class UserControllerTest {
         expectedCreatedUserDTO.setEmail(null);
 
         mockMvc.perform(post(USER_API_URL_PATH)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(expectedCreatedUserDTO)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(expectedCreatedUserDTO)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void whenPUTIsCalledThenOkStatusShouldBeInformed() throws Exception {
+        var expectedUserToUpdateDTO = userDTOBuilder.buildUserDTO();
+        expectedUserToUpdateDTO.setUsername("btardin_updated");
+        Long id = expectedUserToUpdateDTO.getId();
+        var expectedUpdatedMessage = "User btardin_updated with ID 1 successfully updated";
+        MessageDTO expectedUpdatedMessageDTO = MessageDTO.builder().message(expectedUpdatedMessage).build();
+
+        when(service.update(id, expectedUserToUpdateDTO)).thenReturn(expectedUpdatedMessageDTO);
+
+        mockMvc.perform(put(USER_API_URL_PATH + "/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(expectedUserToUpdateDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message", is(expectedUpdatedMessage)));
+    }
+
+    @Test
+    void whenPUTIsCalledWithoutRequiredFieldsThenBadRequestShouldBeReturned() throws Exception {
+        var expectedUpdatedUserDTO = userDTOBuilder.buildUserDTO();
+        final var id = expectedUpdatedUserDTO.getId();
+        expectedUpdatedUserDTO.setEmail(null);
+
+        mockMvc.perform(put(USER_API_URL_PATH + "/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(expectedUpdatedUserDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
 }
