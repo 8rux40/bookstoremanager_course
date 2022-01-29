@@ -7,7 +7,7 @@ O objetivo do projeto Bookstore API Manager é disponibilizar uma API para cadas
 ## Módulos
 - [x] Gerenciamento de Autores
 - [x] Gerenciamento de Editoras
-- [ ] Gerenciamento de Usuários
+- [x] Gerenciamento de Usuários
 - [ ] Gerenciamento de Livros
 - [ ] Autenticação e Autorização
 
