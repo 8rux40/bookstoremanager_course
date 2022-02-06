@@ -59,9 +59,6 @@ class AuthenticationServiceTest {
     @Test
     void whenAnInvalidUsernameIsInformedThenAnExceptionShouldBeThrown() {
         UserDTO expectedFoundUserDTO = userDTOBuilder.buildUserDTO();
-        User expectedFoundUser = userMapper.toModel(expectedFoundUserDTO);
-        SimpleGrantedAuthority expectedUserRole = new SimpleGrantedAuthority("ROLE_" +
-                expectedFoundUserDTO.getRole().getDescription());
         String expectedUsername = expectedFoundUserDTO.getUsername();
 
         when(repository.findByUsername(expectedUsername)).thenReturn(Optional.empty());
