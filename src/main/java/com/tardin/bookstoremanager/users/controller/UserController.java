@@ -1,7 +1,10 @@
 package com.tardin.bookstoremanager.users.controller;
 
+import com.tardin.bookstoremanager.users.dto.JwtRequest;
+import com.tardin.bookstoremanager.users.dto.JwtResponse;
 import com.tardin.bookstoremanager.users.dto.MessageDTO;
 import com.tardin.bookstoremanager.users.dto.UserDTO;
+import com.tardin.bookstoremanager.users.service.AuthenticationService;
 import com.tardin.bookstoremanager.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,9 +18,12 @@ public class UserController implements UserControllerDocs {
 
     private final UserService service;
 
+    private final AuthenticationService authenticationService;
+
     @Autowired
-    public UserController(UserService service) {
+    public UserController(UserService service, AuthenticationService authenticationService) {
         this.service = service;
+        this.authenticationService = authenticationService;
     }
   
     @PostMapping
@@ -37,4 +43,10 @@ public class UserController implements UserControllerDocs {
     public MessageDTO update(@PathVariable Long id, @RequestBody @Valid UserDTO userToUpdateDTO) {
         return service.update(id, userToUpdateDTO);
     }
+
+    @PostMapping(value = "/authenticate")
+    public JwtResponse createAuthenticationToken(@RequestBody @Valid JwtRequest jwtRequest) {
+        return authenticationService.createAuthenticationToken(jwtRequest);
+    }
+
 }
