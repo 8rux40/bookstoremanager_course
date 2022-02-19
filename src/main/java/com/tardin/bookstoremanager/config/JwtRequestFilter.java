@@ -31,8 +31,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String username = null;
-        String jwtToken = null;
+        String username = "";
+        String jwtToken = "";
 
         String requestTokenHeader = request.getHeader(AUTHORIZATION_HEADER);
         if (isTokenPresent(requestTokenHeader)){
@@ -54,7 +54,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     private boolean isUsernameInContext(String username) {
-        return username != null && SecurityContextHolder.getContext().getAuthentication() == null;
+        return username.isEmpty() && SecurityContextHolder.getContext().getAuthentication() == null;
     }
 
     private void addUsernameInContext(HttpServletRequest request, String username, String jwtToken) {
