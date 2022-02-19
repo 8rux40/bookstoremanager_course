@@ -1,5 +1,7 @@
 package com.tardin.bookstoremanager.users.controller;
 
+import com.tardin.bookstoremanager.users.dto.JwtRequest;
+import com.tardin.bookstoremanager.users.dto.JwtResponse;
 import com.tardin.bookstoremanager.users.dto.MessageDTO;
 import com.tardin.bookstoremanager.users.dto.UserDTO;
 import io.swagger.annotations.Api;
@@ -31,5 +33,12 @@ public interface UserControllerDocs {
             @ApiResponse(code = 404, message = "User with informed id not found in the system")
     })
     MessageDTO update(Long id, UserDTO userDTO);
+
+    @ApiOperation(value = "User authentication operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success user authenticated"),
+            @ApiResponse(code = 404, message = "User not found")
+    })
+    JwtResponse createAuthenticationToken(JwtRequest jwtRequest);
 
 }

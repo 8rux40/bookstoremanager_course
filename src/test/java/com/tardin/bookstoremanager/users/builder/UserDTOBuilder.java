@@ -2,8 +2,12 @@ package com.tardin.bookstoremanager.users.builder;
 
 import com.tardin.bookstoremanager.users.dto.UserDTO;
 import com.tardin.bookstoremanager.users.enums.Gender;
+import com.tardin.bookstoremanager.users.enums.Role;
 import lombok.Builder;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 import static java.time.Month.MARCH;
@@ -35,6 +39,9 @@ public class UserDTOBuilder {
     @Builder.Default
     private final LocalDate birthDate = LocalDate.of(1998, MARCH, 17);
 
+    @Builder.Default
+    private Role role = Role.USER;
+
     public UserDTO buildUserDTO(){
         return new UserDTO(
                 id,
@@ -44,7 +51,8 @@ public class UserDTOBuilder {
                 email,
                 username,
                 password,
-                birthDate
+                birthDate,
+                role
         );
     }
 }
