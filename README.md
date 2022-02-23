@@ -9,7 +9,7 @@ O objetivo do projeto Bookstore API Manager é disponibilizar uma API para cadas
 - [x] Gerenciamento de Editoras
 - [x] Gerenciamento de Usuários
 - [ ] Gerenciamento de Livros
-- [ ] Autenticação e Autorização
+- [x] Autenticação e Autorização
 
 ## Executar
 Para executar o projeto no terminal, digite o seguinte comando:
